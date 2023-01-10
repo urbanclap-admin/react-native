@@ -273,8 +273,8 @@
   uint16_t _coalescingKey;
   NSString *_lastEmittedEventName;
   NSHashTable *_scrollListeners;
-  BOOL isScrollBeginFired;
-  BOOL isScrollEndFired;
+  BOOL _isScrollBeginFired;
+  BOOL _isScrollEndFired;
 }
 
 - (instancetype)initWithEventDispatcher:(id<RCTEventDispatcherProtocol>)eventDispatcher
@@ -310,10 +310,11 @@
     _cachedChildFrames = [NSMutableArray new];
 
     _scrollListeners = [NSHashTable weakObjectsHashTable];
-    printf("shaggz -> init properties in RCTScrollview -> address = %lu \n",self.hash);
+
     _setResponderIgnoreScroll = false;
-    isScrollBeginFired = NO;
-    isScrollEndFired = NO;
+    _isScrollBeginFired = NO;
+    _isScrollEndFired = NO;
+
     [self addSubview:_scrollView];
   }
   return self;
@@ -764,20 +765,20 @@ RCT_SCROLL_EVENT_HANDLER(scrollViewDidScrollToTop, onScrollToTop)
 {
   [super didMoveToWindow];
   if (self.window == nil) {
-    if(isScrollBeginFired == YES && isScrollEndFired == NO) {
+    if(_isScrollBeginFired == YES && _isScrollEndFired == NO) {
       // Fire the end deceleration event
       RCT_SEND_SCROLL_EVENT(onMomentumScrollEnd, nil);
       RCT_FORWARD_SCROLL_EVENT(scrollViewDidEndDecelerating : _scrollView);
-      isScrollEndFired = YES;
-      isScrollBeginFired = NO;
+      _isScrollEndFired = YES;
+      _isScrollBeginFired = NO;
     }
   }
 }
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
 {
-  isScrollBeginFired = YES;
-  isScrollEndFired = NO;
+  _isScrollBeginFired = YES;
+  _isScrollEndFired = NO;
   RCT_SEND_SCROLL_EVENT(onMomentumScrollBegin, nil);
   RCT_FORWARD_SCROLL_EVENT(scrollViewWillBeginDecelerating : scrollView);
 }
@@ -787,8 +788,8 @@ RCT_SCROLL_EVENT_HANDLER(scrollViewDidScrollToTop, onScrollToTop)
   // Fire a final scroll event
   _allowNextScrollNoMatterWhat = YES;
   [self scrollViewDidScroll:scrollView];
-  isScrollEndFired = YES;
-  isScrollBeginFired = NO;
+  _isScrollEndFired = YES;
+  _isScrollBeginFired = NO;
   // Fire the end deceleration event
   RCT_SEND_SCROLL_EVENT(onMomentumScrollEnd, nil);
   RCT_FORWARD_SCROLL_EVENT(scrollViewDidEndDecelerating : scrollView);
