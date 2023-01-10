@@ -16,6 +16,7 @@
   CGFloat _scrollViewZoomScale;
   NSDictionary *_userData;
   uint16_t _coalescingKey;
+  BOOL _responderIgnoreScroll;
 }
 
 @synthesize viewTag = _viewTag;
