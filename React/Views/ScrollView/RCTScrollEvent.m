@@ -30,6 +30,7 @@
               scrollViewZoomScale:(CGFloat)scrollViewZoomScale
                          userData:(NSDictionary *)userData
                     coalescingKey:(uint16_t)coalescingKey
+                    responderIgnoreScroll:(BOOL)responderIgnoreScroll
 {
   RCTAssertParam(reactTag);
 
@@ -43,6 +44,7 @@
     _scrollViewZoomScale = scrollViewZoomScale;
     _userData = userData;
     _coalescingKey = coalescingKey;
+    _responderIgnoreScroll = responderIgnoreScroll;
   }
   return self;
 }
@@ -67,6 +69,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)init)
     @"contentSize" : @{@"width" : @(_scrollViewContentSize.width), @"height" : @(_scrollViewContentSize.height)},
     @"layoutMeasurement" : @{@"width" : @(_scrollViewFrame.size.width), @"height" : @(_scrollViewFrame.size.height)},
     @"zoomScale" : @(_scrollViewZoomScale ?: 1),
+    @"responderIgnoreScroll": @(_responderIgnoreScroll)
   };
 
   if (_userData) {
