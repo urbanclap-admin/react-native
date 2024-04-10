@@ -1213,7 +1213,7 @@ public abstract class DevSupportManagerBase implements DevSupportManager {
       Context context, BroadcastReceiver receiver, IntentFilter filter, boolean exported) {
     if (Build.VERSION.SDK_INT >= 34 && context.getApplicationInfo().targetSdkVersion >= 34) {
       context.registerReceiver(
-          receiver, filter, exported ? Context.RECEIVER_EXPORTED : Context.RECEIVER_NOT_EXPORTED);
+          receiver, filter, exported ? 2 : 4);
     } else {
       context.registerReceiver(receiver, filter);
     }
